@@ -14,3 +14,20 @@
   become_user: "{{postgresql_admin_user}}"
   with_items: "{{postgresql_user_privileges}}"
   when: postgresql_users|length > 0
+
+- name: PostgreSQL | Update privileges
+  postgresql_privs:
+    db: "{{item.db}}"
+    objs: "{{item.objs | default(omit)}}"
+    privs: "{{item.privs | default(omit)}}"
+    roles: "{{item.roles}}"
+    schema: "{{item.schema | default(omit)}}"  # defaults to 'public
+    state: present
+    type: "{{item.type | default(omit)}}"  # defaults to 'table'
+    login_host: "{{item.host | default(omit)}}"
+    login_port: "{{postgresql_port}}"
+    login_user: "{{postgresql_admin_user}}"
+  become: yes
+  become_user: "{{postgresql_admin_user}}"
+  with_items: "{{postgresql_privileges}}"
+  when: postgresql_privileges|length > 0
